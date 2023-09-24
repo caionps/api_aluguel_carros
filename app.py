@@ -124,7 +124,8 @@ def update():
 @app.route('/', methods=['DELETE'])
 def delete():
     id_delete = request.get_json().get('id_aluguel')
+
     df = abre_csv()
-    df = df.drop(df.loc[df['id_aluguel'] == id_delete])
+    df = df.loc[df['id_aluguel'] != id_delete]
     df.to_csv('aluguel_carros.csv', index = False)
     return 'Exclusão realizada com sucesso!'
