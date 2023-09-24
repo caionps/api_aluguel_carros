@@ -1,7 +1,6 @@
 from flask import Flask, request
 from datetime import date
 import json
-import csv
 import pandas as pd
 
 app = Flask(__name__)
@@ -89,6 +88,7 @@ def create():
     # Utilização de list comprehension para pegar apenas os valores do json
     lista_novo_aluguel = [json_novo_aluguel[key] for key in json_novo_aluguel]
     lista_novo_aluguel.insert(0,gerador_id)
+    lista_novo_aluguel = caixa_alta(lista_novo_aluguel)
     lista_to_df = pd.DataFrame([lista_novo_aluguel], columns=abre_csv().columns)
     novo_csv_df = pd.concat([abre_csv(),lista_to_df])
     novo_csv_df.to_csv('aluguel_carros.csv', index = False)
@@ -97,11 +97,14 @@ def create():
 @app.route('/', methods=['GET'])
 def read():
     json_id = request.get_json()
-    id_aluguel = json_id.get('id_aluguel')   
-    lista_id = abre_csv().loc[abre_csv()['id_aluguel'] == id_aluguel]
-    lista_colunas = list(abre_csv().columns)
+    id_aluguel = json_id.get('id_aluguel')
+
+    df = abre_csv()  
+    lista_id = df.loc[df['id_aluguel'] == id_aluguel].values.tolist()
+
+    lista_colunas = list(df.columns)
     chaves = [chave for chave in lista_colunas]
-    json_resposta = criar_json(chaves,lista_id)
+    json_resposta = criar_json(chaves,lista_id[0])
     
     return json.dumps(json_resposta)
 
@@ -120,4 +123,8 @@ def update():
 
 @app.route('/', methods=['DELETE'])
 def delete():
-    return "<p>Hello, World!</p>"
+    id_delete = request.get_json().get('id_aluguel')
+    df = abre_csv()
+    df = df.drop(df.loc[df['id_aluguel'] == id_delete])
+    df.to_csv('aluguel_carros.csv', index = False)
+    return 'Exclusão realizada com sucesso!'
