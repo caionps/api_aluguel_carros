@@ -97,7 +97,7 @@ def create():
 @app.route('/', methods=['GET'])
 def read():
     json_id = request.get_json()
-    id_aluguel = json_id.get('id')   
+    id_aluguel = json_id.get('id_aluguel')   
     lista_id = abre_csv().loc[abre_csv()['id_aluguel'] == id_aluguel]
     lista_colunas = list(abre_csv().columns)
     chaves = [chave for chave in lista_colunas]
@@ -108,7 +108,15 @@ def read():
 
 @app.route('/', methods=['PUT'])
 def update():
-    return "<p>Hello, World!</p>"
+    json_update = request.get_json()
+    json_update = validar_novo_aluguel(json_update)
+    lista_update = [json_update[key] for key in json_update]
+    
+    df = abre_csv()
+    df.loc[df['id_aluguel'] == lista_update[0]] = lista_update
+    df.to_csv('aluguel_carros.csv', index = False)
+
+    return 'Update realizado com sucesso'
 
 @app.route('/', methods=['DELETE'])
 def delete():
