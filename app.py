@@ -47,13 +47,20 @@ def caixa_alta(lista):
     lista_caixa_alta = list(map(lambda x: str(x).upper() if isinstance(x, str) else x, lista)) #Função Lambda
     return lista_caixa_alta
 
-# CLOSURE PARA GERAR ID E VERIFICAR SE O ID ESTÁ NOS DADOS
+
+def abre_csv():
+    with open('aluguel_carros.csv', 'r') as arquivo_csv:
+            dados_csv = pd.read_csv(arquivo_csv)
+    return dados_csv 
+
+# CLOSURE PARA GERAR ID 
 def id_aux():
+    df = abre_csv()
     def gerar_id():
-        with open('aluguel_carros.csv', 'r') as arquivo_csv:
-            dados = pd.read_csv(arquivo_csv)
-            id_aluguel = dados['id_aluguel'].max() + 1
-        return id_aluguel
+        id_aluguel = df['id_aluguel'].max()
+        novo_id_aluguel = id_aluguel + 1
+        return novo_id_aluguel
+    return gerar_id()
 
 gerador_id = id_aux()
 
@@ -71,18 +78,21 @@ def verificar_id(id_de_busca):
 @app.route('/', methods=['POST'])
 def create():
     json_novo_aluguel = request.get_json()
+    json_novo_aluguel = validar_novo_aluguel(json_novo_aluguel)
     # Utilização de list comprehension para pegar apenas os valores do json
     lista_novo_aluguel = [json_novo_aluguel[key] for key in json_novo_aluguel]
-    json_novo_aluguel = validar_novo_aluguel(json_novo_aluguel)
-
-    with open('aluguel_carros.csv', 'a', newline="") as arquivo_csv:
-        escritor_csv = csv.writer(arquivo_csv)
-        escritor_csv.writerow(lista_novo_aluguel)
-
+    lista_novo_aluguel.insert(0,gerador_id)
+    lista_to_df = pd.DataFrame([lista_novo_aluguel], columns=abre_csv().columns)
+    novo_csv_df = pd.concat([abre_csv(),lista_to_df])
+    novo_csv_df.to_csv('aluguel_carros.csv', index = False)
+    return 'Dados inseridos com Sucesso'
 
 @app.route('/', methods=['GET'])
 def read():
-    return "<p>Hello, World!</p>"
+#    json = request.get_json()   
+#    if json.get('id') = 'todos'
+        return 
+
 
 @app.route('/', methods=['PUT'])
 def update():
