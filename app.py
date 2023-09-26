@@ -111,15 +111,18 @@ def read():
 
 @app.route('/', methods=['PUT'])
 def update():
-    json_update = request.get_json()
-    json_update = validar_aluguel(json_update)
-    lista_update = [json_update[key] for key in json_update]
-    
-    df = abre_csv()
-    df.loc[df['id_aluguel'] == lista_update[0]] = lista_update
-    df.to_csv('aluguel_carros.csv', index = False)
+    try:
+        json_update = request.get_json()
+        json_update = validar_aluguel(json_update)
+        lista_update = [json_update[key] for key in json_update]
+        
+        df = abre_csv()
+        df.loc[df['id_aluguel'] == lista_update[0]] = lista_update
+        df.to_csv('aluguel_carros.csv', index = False)
 
-    return 'Update realizado com sucesso'
+        return 'Update realizado com sucesso!'
+    except Exception as e:
+        return f"Erro 400 - {e}"
 
 @app.route('/', methods=['DELETE'])
 def delete():
