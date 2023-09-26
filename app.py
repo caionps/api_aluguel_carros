@@ -12,8 +12,12 @@ def validar_data(data):
     except ValueError:
         return False
 
+
 def validar_cpf(cpf):
-    return cpf
+    if len(cpf) != 14:
+        return False
+    else: 
+        return True
 
 # Aqui se encontra uma função de continuação que utiliza as funções de validação de data e cpf para validar a nova entrada de dados
 def validar_aluguel(dados):
@@ -24,8 +28,8 @@ def validar_aluguel(dados):
         raise ValueError('Data de fim do aluguel é obrigatória')
     if not dados.get('km_rodados_aluguel'):
         raise ValueError('É necessário indicar a rodagem do carro no aluguel')
-    if not dados.get('carro'):
-        raise ValueError('Carro é obrigatório')
+    if not dados.get('carro_marca_modelo'):
+        raise ValueError('É necessário indicar a marca e o modelo do carro alugado')
     if not dados.get('nm_cliente'):
         raise ValueError('Nome do cliente é obrigatório')
     if not dados.get('cpf_cliente'):
