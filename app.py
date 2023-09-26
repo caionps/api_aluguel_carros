@@ -113,7 +113,7 @@ def read():
 def update():
     try:
         json_update = request.get_json()
-        json_update = validar_aluguel(json_update)
+        validar_aluguel(json_update)
         lista_update = [json_update[key] for key in json_update]
         
         df = abre_csv()
