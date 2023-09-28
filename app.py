@@ -14,14 +14,13 @@ def validar_data(data):
 
 
 def validar_cpf(cpf):
-    if len(cpf) != 14:
+    if len(cpf) != 11 and not cpf.isdigit():
         return False
     else: 
         return True
 
 # Aqui se encontra uma função de continuação que utiliza as funções de validação de data e cpf para validar a nova entrada de dados
 def validar_aluguel(dados):
-    # SUBSTITUIR TODOS OS CAMPOS Q SÃO OBRIGATÓRIOS POR UMA FUNÇÃO LAMBDA COM LIST COMPREHENSION
     if not dados.get('dt_inicio_aluguel'):
         raise ValueError('Data de início do aluguel é obrigatória')
     if not dados.get('dt_fim_aluguel'):
