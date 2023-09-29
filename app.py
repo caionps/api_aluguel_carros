@@ -45,8 +45,9 @@ def validar_aluguel(dados):
         raise ValueError('O CPF está incorreto')    
     return 
 
-# MONAD PARA COLOCAR LISTA EM CAIXA ALTA
+# Monad list para deixar os textos em caixa alta
 def caixa_alta(lista):
+    #Função Lambda
     lista_caixa_alta = list(map(lambda x: str(x).upper() if isinstance(x, str) else x, lista)) #Função Lambda
     return lista_caixa_alta
 
@@ -74,9 +75,9 @@ def criar_json(chaves,valores):
 @app.route('/', methods=['POST'])
 def create():
     try:
-        # Utilização de list comprehension para pegar apenas os valores do json
         json_novo_aluguel = request.get_json()
         validar_aluguel(json_novo_aluguel)
+        # Utilização de list comprehension para pegar apenas os valores do json
         lista_novo_aluguel = [json_novo_aluguel[key] for key in json_novo_aluguel]
 
         id_aluguel = id_aux() # Utilização do gerador de IDs
